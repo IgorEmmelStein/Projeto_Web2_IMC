@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="../css/PainelAdministrativo.css">
+    <title>Painel Administrativo</title>
 </head>
+
 <body>
-    <form action="">
-        <img src="" alt="banner">
-        <label for="">Painel administrativo</label>
-        <button type="button">Visualizar registros</button>
-        <button type="button">Dados - IMC</button>
-        <button type="button">Dados - Idade</button>
-        <button type="button">Dados - Peso</button>
-        
+    <form action="../php/dadosConexao.php" method="POST">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" style="width: 100%; max-width: 50px;" alt="banner"> <br>
+        <label>Painel administrativo</label>
+        <br><br>
+
+        <button type="button" onclick="location.href='PA_Registros.html'">Visualizar registros</button>
+        <button type="button" onclick="location.href='PA_DadosIMC.php'">Dados - IMC</button>
+        <button type="button" onclick="location.href='PA_DadosIdade.html'">Dados - Idade</button>
+        <button type="button" onclick="location.href='PA_DadosPeso.html'">Dados - Peso</button> 
     </form>
-    <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)
-</footer>
+
+    <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)</footer>
 </body>
+
 </html>
