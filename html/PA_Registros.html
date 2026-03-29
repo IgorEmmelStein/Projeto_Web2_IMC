@@ -3,33 +3,34 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/PainelAdministrativo.css">
     <title>Visualização de Dados</title>
 </head>
 
-<body>
-
+<body onload="carregarDados('todos')">
     <div class="container">
         <img src="" alt="banner"> <br>
-        <label>Visualização de Dados Selecionados</label>
+        <label>Todos os dados em tabela</label>
         <br><br>
 
         <div id="tabela-resultados">
-            <h1>Listagem Completa de Estudantes</h1>
-            <?php 
-            include "../php/funcoes.php"; 
-            $con = conectar();
-            consultaEstudantes($con, "todos"); 
-            mysqli_close($con);
-        ?>
         </div>
 
         <br>
         <button type="button" onclick="location.href='PainelAdministrativo.html'">Voltar ao Painel</button>
     </div>
 
-    <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)</footer>
+    <script>
+        function carregarDados(filtro) {
+            fetch('../php/dadosConexao.php?acao=' + filtro)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('tabela-conteudo').innerHTML = data;
+                    document.getElementById('titulo-pagina').innerText = "Relatório: " + filtro.toUpperCase();
+                })
+                .catch(error => console.error('Erro:', error));
+        }
+    </script>
 </body>
 
 </html>

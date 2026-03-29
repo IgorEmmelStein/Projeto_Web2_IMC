@@ -10,14 +10,16 @@
 
 <body>
     <form action="../php/dadosConexao.php" method="POST">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png" style="width: 100%; max-width: 50px;" alt="banner"> <br>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png"
+            style="width: 100%; max-width: 50px;" alt="banner"> <br>
         <label>Painel administrativo</label>
         <br><br>
-
-        <button type="button" onclick="location.href='PA_Registros.html'">Visualizar registros</button>
-        <button type="button" onclick="location.href='PA_DadosIMC.php'">Dados - IMC</button>
-        <button type="button" onclick="location.href='PA_DadosIdade.html'">Dados - Idade</button>
-        <button type="button" onclick="location.href='PA_DadosPeso.html'">Dados - Peso</button> 
+        <div class="menu-botoes">
+            <button type="button" onclick="window.location.href='PA_Registros.html'">Visualizar registros</button>
+            <button type="button" onclick="window.location.href='PA_DadosIMC.html'">Dados - IMC</button>
+            <button type="button" onclick="window.location.href='PA_DadosIdade.html'">Dados - Idade</button>
+            <button type="button" onclick="window.location.href='PA_DadosPeso.html'">Dados - Peso</button>
+        </div>
     </form>
 
     <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)</footer>
