@@ -2,7 +2,7 @@
 $localSevidor = "localhost";
 $usuario = "root";
 $senha = "";
-$nomeBaseDados = "projeto_web2_imc";
+$nomeBaseDados = "trabalho1-web2-joao-igor";
 
 include __DIR__ . "/funcoes.php"; // Garante o caminho correto
 

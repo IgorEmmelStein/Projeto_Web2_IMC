@@ -14,7 +14,7 @@ function conectar(): mysqli
 }
 
 function consultaEstudantes(mysqli $conexao, string $filtro): void {
-    $comandoSQL = "SELECT * FROM estudantes"; // Busca tudo, o filtro decide o que mostrar
+    $comandoSQL = "SELECT * FROM pessoas"; // Busca tudo, o filtro decide o que mostrar
     $retorno = mysqli_query($conexao, $comandoSQL);
 
     echo "<table><tr><th>Nome</th>";
