@@ -1,8 +1,8 @@
 CREATE DATABASE IF NOT EXISTS projeto_imc;
 USE projeto_imc;
 
-CREATE TABLE IF NOT EXISTS pessoas (
-    idpessoa INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS estudantes (
+    idestudante INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     sobrenome VARCHAR(100) NOT NULL,
     idade INT NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS pessoas (
     imc DECIMAL(5,2)
 );
 
-INSERT INTO pessoas (nome, sobrenome, idade, peso, altura) VALUES 
+INSERT INTO estudantes (nome, sobrenome, idade, peso, altura) VALUES 
 ('Ana Souza', 'Souza', 21, 65.50, 1.70),
 ('Bruno Lima', 'Lima', 24, 82.00, 1.85),
 ('Carla Dias', 'Dias', 19, 58.20, 1.65),

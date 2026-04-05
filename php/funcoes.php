@@ -1,16 +1,23 @@
 <?php
-include __DIR__ . "/dadosConexao.php";
 
-function conectar(): mysqli {
-    include 'dadosConexao.php'; 
+function conectar(): mysqli
+{
+    include 'dadosConexao.php';
 
-    $conexao = new mysqli($host, $user, $pass, $base);
+    $conexao = new mysqli($localSevidor, $usuario, $senha, $nomeBaseDados);
 
     if ($conexao->connect_error) {
         die("Falha na conexão: " . $conexao->connect_error);
     }
 
     return $conexao;
+}
+
+function registrarLog(string $operacao): void
+{
+    $dataHora = date('Y-m-d H:i:s');
+    $mensagem = "[$dataHora] Operação: $operacao" . PHP_EOL;
+    file_put_contents('operacoes_bd.txt', $mensagem, FILE_APPEND);
 }
 
 function calcularIMC(float $peso, float $altura): float
@@ -31,149 +38,172 @@ function classificarIMC(float $imc): string
     return "Obesidade grau 3";
 }
 
-function registrarLog(string $operacao): void
-{
-    $dataHora = date('Y-m-d H:i:s');
-    $mensagem = "[$dataHora] Operação: $operacao" . PHP_EOL;
-    file_put_contents('operacoes_bd.txt', $mensagem, FILE_APPEND);
-}
-
-// Lógica de processamento do Botão de Ação
-if (isset($_POST['btnAcao'])) {
-    $conexao = conectar();
-    $filtro = $_POST['btnAcao'];
-    
-    echo "<h2>Resultados: " . ucfirst($filtro) . "</h2>";
-    consultaEstudantes($conexao, $filtro);
-    
-    echo "<br><a href='PainelAdministrativo.html'>Voltar pro Painel</a>";
-    mysqli_close($conexao);
-}
-
-// --- FUNÇÕES DE CRUD (TABELA PESSOAS) ---
-
-function inserirPessoa(string $nome, string $sobrenome, int $id, float $peso, float $altura): void
+function inserirestudante(string $nome, string $sobrenome, int $idade, float $peso, float $altura): void
 {
     $conexao = conectar();
     $imc = calcularIMC($peso, $altura);
-    $comandoSQL = "INSERT INTO pessoas (nome, sobrenome, idade, peso, altura, imc) VALUES ('$nome', '$sobrenome', $id, $peso, $altura, $imc)";
+    
+    $stmt = $conexao->prepare("INSERT INTO estudantes (nome, sobrenome, idade, peso, altura, imc) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssiddd", $nome, $sobrenome, $idade, $peso, $altura, $imc);
+
+    if ($stmt->execute()) {
+        registrarLog("Inserção de estudante: $nome");
+        echo "estudante inserida com sucesso!";
+    } else {
+        echo "Erro: " . $conexao->error;
+    }
+    $conexao->close();
+}
+
+function excluirestudante(int $id): void
+{
+    $conexao = conectar();
+    $comandoSQL = "DELETE FROM estudantes WHERE idestudante = $id";
 
     if (mysqli_query($conexao, $comandoSQL)) {
-        registrarLog("Inserção de pessoa: $nome");
-        echo "Pessoa inserida com sucesso!";
+        registrarLog("Exclusão de estudante com ID: $id");
+        echo "estudante excluída com sucesso!";
     } else {
         echo "Erro: " . mysqli_error($conexao);
     }
     mysqli_close($conexao);
 }
 
-function excluirPessoa(int $id): void
+function alterarestudante(int $id, string $nome, string $sobrenome, int $idade, float $peso, float $altura): void
 {
     $conexao = conectar();
-    $comandoSQL = "DELETE FROM pessoas WHERE id = $id";
+    $imc = calcularIMC($peso, $altura);
+    $comandoSQL = "UPDATE estudantes SET nome='$nome', sobrenome='$sobrenome', idade=$idade, peso=$peso, altura=$altura, imc=$imc WHERE idestudante=$id";
 
     if (mysqli_query($conexao, $comandoSQL)) {
-        registrarLog("Exclusão de pessoa com ID: $id");
-        echo "Pessoa excluída com sucesso!";
-    } else { 
-        echo "Erro: " . mysqli_error($conexao);
-    }
-    mysqli_close($conexao);
-}
-
-function alterarPessoa(int $id, string $nome, string $sobrenome, int $idade, float $peso, float $altura): void
-{
-    $conexao = conectar();
-    $comandoSQL = "UPDATE pessoas SET nome='$nome', sobrenome='$sobrenome', idade=$idade, peso=$peso, altura=$altura WHERE id=$id";
-
-    if (mysqli_query($conexao, $comandoSQL)) {
-        registrarLog("Alteração de pessoa com ID: $id");
-        echo "Pessoa alterada com sucesso!";
+        registrarLog("Alteração de estudante com ID: $id");
+        echo "estudante alterada com sucesso!";
     } else {
         echo "Erro: " . mysqli_error($conexao);
     }
     mysqli_close($conexao);
 }
 
-function consultaEstudantes(mysqli $conexao, string $filtro): void
+function consultaEstudantes(mysqli $conexao): void
 {
-    $comandoSQL = "SELECT * FROM pessoas";
+    $comandoSQL = "SELECT * FROM estudantes";
     $retorno = mysqli_query($conexao, $comandoSQL);
 
-    echo "<table border='1'><tr><th>Nome</th>";
-    if ($filtro == "todos" || $filtro == "idade") echo "<th>Idade</th>";
-    if ($filtro == "todos" || $filtro == "peso") echo "<th>Peso</th>";
-    if ($filtro == "todos" || $filtro == "imc") echo "<th>IMC</th>";
-    echo "</tr>";
+    echo "<table border='1'>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>IMC</th>
+                <th>Ações</th> 
+            </tr>";
 
     while ($reg = mysqli_fetch_array($retorno)) {
-        echo "<tr><td>{$reg['nome']}</td>";
-        if ($filtro == "todos" || $filtro == "idade") echo "<td>{$reg['idade']}</td>";
-        if ($filtro == "todos" || $filtro == "peso") echo "<td>{$reg['peso']}</td>";
-        if ($filtro == "todos" || $filtro == "imc") echo "<td>{$reg['imc']}</td>";
-        echo "</tr>";
+        echo "<tr>
+                <td>{$reg['nome']} {$reg['sobrenome']}</td>
+                <td>{$reg['idade']}</td>
+                <td>" . number_format($reg['imc'], 2) . "</td>
+                <td>
+                    <a href='form_alterar.php?id={$reg['idestudante']}'>Alterar</a> | 
+                    <a href='../php/processa_exclusao.php?id={$reg['idestudante']}'>Excluir</a>
+                </td>
+              </tr>";
     }
     echo "</table>";
 }
 
-// --- FUNÇÕES DE ESTATÍSTICA ---
-
-function listarTodos(): mysqli_result
-{
+// Retorna todos os registros em um array para processamento manual
+function buscarDadosBrutos(): array {
     $conn = conectar();
-    $sql = "SELECT * FROM pessoas";
-    return $conn->query($sql);
-}
-
-function getMediaIdade(mysqli_result $dados): float{
-    $somaIdade = 0;
-    $total = 0;
-    foreach ($dados as $p) {
-        $somaIdade += $p['idade'];    
-        $total++;
+    $res = $conn->query("SELECT * FROM estudantes"); 
+    if (!$res) {
+        die("Erro na consulta: " . $conn->error);
     }
-    return $total > 0 ? $somaIdade / $total : 0;
+    $dados = $res->fetch_all(MYSQLI_ASSOC);
+    $conn->close();
+    return $dados;
 }
 
-// Busca a pessoa mais velha percorrendo o array 
-function getPessoaMaisVelha(array $lista): array {
-    $maior = $lista[0];
-    foreach ($lista as $p) {
-        if ($p['idade'] > $maior['idade']) {
-            $maior = $p;
-        }
-    }
-    return $maior;
-}
+// Estatísticas de Idade
+function processarEstatisticasIdade(array $lista): array {
+    if (empty($lista)) return [];
 
-// Busca a pessoa mais nova e retorna nome e altura 
-function getPessoaMaisNova(array $lista): array {
-    $menor = $lista[0];
-    foreach ($lista as $p) {
-        if ($p['idade'] < $menor['idade']) {
-            $menor = $p;
-        }
-    }
-    return $menor;
-}
-
-// Calcula a média de idade do grupo 
-function calcularMediaIdade(array $lista): float {
     $soma = 0;
+    $velha = $lista[0];
+    $nova = $lista[0];
+
     foreach ($lista as $p) {
         $soma += $p['idade'];
+        if ($p['idade'] > $velha['idade']) $velha = $p;
+        if ($p['idade'] < $nova['idade']) $nova = $p;
     }
-    return count($lista) > 0 ? $soma / count($lista) : 0;
-}
 
-// Retorna nomes de quem está acima e abaixo da média 
-function getRelatorioMedia(array $lista, float $media): array {
+    $media = $soma / count($lista);
     $acima = [];
     $abaixo = [];
+
     foreach ($lista as $p) {
         if ($p['idade'] > $media) $acima[] = $p['nome'];
         elseif ($p['idade'] < $media) $abaixo[] = $p['nome'];
     }
-    return ['acima' => $acima, 'abaixo' => $abaixo];
+
+    // Ordenação manual para os rankings
+    $listaMaiores = $lista;
+    usort($listaMaiores, fn($a, $b) => $b['idade'] <=> $a['idade']);
+    
+    $listaMenores = $lista;
+    usort($listaMenores, fn($a, $b) => $a['idade'] <=> $b['idade']);
+
+    return [
+        'media' => $media,
+        'mais_velha' => $velha,
+        'mais_nova' => $nova,
+        'nomes_acima' => $acima,
+        'nomes_abaixo' => $abaixo,
+        'top3_velhos' => array_slice($listaMaiores, 0, 3),
+        'top5_novos' => array_slice($listaMenores, 0, 5)
+    ];
+}
+
+// Estatísticas de Peso e IMC
+function processarEstatisticasSaude(array $lista): array {
+    if (empty($lista)) return [];
+
+    $maiorPeso = $lista[0]['peso'];
+    $menorPeso = $lista[0]['peso'];
+    $somaPeso = 0;
+    $somaIMC = 0;
+    $contagemGraus = [];
+    $foraDoNormal = [];
+
+    foreach ($lista as $p) {
+        // Peso
+        if ($p['peso'] > $maiorPeso) $maiorPeso = $p['peso'];
+        if ($p['peso'] < $menorPeso) $menorPeso = $p['peso'];
+        $somaPeso += $p['peso'];
+
+        // IMC
+        $somaIMC += $p['imc'];
+        $classe = classificarIMC($p['imc']);
+        $contagemGraus[$classe] = ($contagemGraus[$classe] ?? 0) + 1;
+
+        // Fora do Normal (Cálculo de ganho/perda)
+        if ($classe != "Peso normal") {
+            $pesoIdeal = 22 * ($p['altura'] * $p['altura']);
+            $foraDoNormal[] = [
+                'nome' => $p['nome'],
+                'peso_atual' => $p['peso'],
+                'diferenca' => $pesoIdeal - $p['peso']
+            ];
+        }
+    }
+
+    return [
+        'peso_maior' => $maiorPeso,
+        'peso_menor' => $menorPeso,
+        'peso_media' => $somaPeso / count($lista),
+        'imc_media' => $somaIMC / count($lista),
+        'contagem_imc' => $contagemGraus,
+        'ajustes_peso' => $foraDoNormal
+    ];
 }
 ?>

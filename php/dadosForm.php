@@ -14,8 +14,10 @@ $idadeRecebida     = $_POST['containerIdade'];
 $pesoRecebido      = $_POST['containerPeso'];
 $alturaRecebida    = $_POST['containerAltura'];
 
-$query = $conexao->prepare("INSERT INTO pessoas (nome, sobrenome, idade, peso, altura) VALUES (?, ?, ?, ?, ?)");
-$query->bind_param("ssidd", $nomeRecebido, $sobrenomeRecebido, $idadeRecebida, $pesoRecebido, $alturaRecebida);
+$imc = calcularIMC($pesoRecebido, $alturaRecebida);
+
+$query = $conexao->prepare("INSERT INTO estudantes (nome, sobrenome, idade, peso, altura, imc) VALUES (?, ?, ?, ?, ?, ?)");
+$query->bind_param("ssiddd", $nomeRecebido, $sobrenomeRecebido, $idadeRecebida, $pesoRecebido, $alturaRecebida, $imc);
 
 $inserido = mysqli_query($conexao, $query);
 
