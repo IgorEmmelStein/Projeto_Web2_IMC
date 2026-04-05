@@ -23,3 +23,4 @@ if ($query->execute()) {
 
 $query->close();
 $conexao->close();
+?>
