@@ -1,25 +1,80 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/PainelAdministrativo.css">
-    <title>Visualização de Dados</title>
+    <link rel="stylesheet" href="../css/index.css">
+    <title>Dados de Idade</title>
 </head>
+
 <body>
-
     <div class="container">
-        <img src="" alt="banner"> <br>
-        <label>Visualização de Dados Selecionados</label>
-        <br><br>
-
+        <label>Visualização de Dados: Idade</label>
         <div id="tabela-resultados">
-            </div>
-
+            <table border="1">
+                <tr>
+                    <th>Requisito</th>
+                    <th>Resultado</th>
+                </tr>
+                <tr>
+                    <td>Maior Idade?</td>
+                    <td>
+                        <?= $velha['idade'] ?> anos
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nome da pessoa mais velha?</td>
+                    <td>
+                        <?= $velha['nome'] ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Menor Idade?</td>
+                    <td>
+                        <?= $nova['idade'] ?> anos
+                    </td>
+                </tr>
+                <tr>
+                    <td>Nome e altura da pessoa mais nova?</td>
+                    <td>
+                        <?= $nova['nome'] ?> (
+                        <?= $nova['altura'] ?>m)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Idade média do grupo?</td>
+                    <td>
+                        <?= number_format($media, 1) ?> anos
+                    </td>
+                </tr>
+                <tr>
+                    <td>Acima da média?</td>
+                    <td>
+                        <?= count($relatorio['acima']) ?> pessoas (
+                        <?= implode(", ", $relatorio['acima']) ?>)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Abaixo da média?</td>
+                    <td>
+                        <?= count($relatorio['abaixo']) ?> pessoas
+                    </td>
+                </tr>
+            </table>
+        </div>
         <br>
-        <button type="button" onclick="location.href='PainelAdministrativo.html'">Voltar ao Painel</button>
+        <button type="button" onclick="location.href='PainelAdministrativo.html'">Voltar</button>
     </div>
-
-    <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)</footer>
+    [cite_start]<footer>Pesquisadores: Igor Stein e Dupla [cite: 2]</footer>
 </body>
+
 </html>
+
+<script>
+    window.onload = function () {
+        fetch('../php/dadosForm.php?acao=estatisticas_idade')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('tabela-resultados').innerHTML = html;
+            });
+    };
+</script>

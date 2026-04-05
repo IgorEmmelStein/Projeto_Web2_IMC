@@ -1,14 +1,15 @@
 <?php
 include __DIR__ . "/dadosConexao.php";
 
-function conectar(): mysqli
-{
-    include __DIR__ . "/dadosConexao.php";
-    $conexao = mysqli_connect($localSevidor, $usuario, $senha, $nomeBaseDados);
+function conectar(): mysqli {
+    include 'dadosConexao.php'; 
 
-    if (!$conexao) {
-        die("Erro: " . mysqli_connect_error());
+    $conexao = new mysqli($host, $user, $pass, $base);
+
+    if ($conexao->connect_error) {
+        die("Falha na conexão: " . $conexao->connect_error);
     }
+
     return $conexao;
 }
 
@@ -134,6 +135,45 @@ function getMediaIdade(mysqli_result $dados): float{
     return $total > 0 ? $somaIdade / $total : 0;
 }
 
-// (As outras funções getMaiorIdade, getMenorIdade, etc., seguem a mesma lógica usando a tabela pessoas)
-// teste
+// Busca a pessoa mais velha percorrendo o array 
+function getPessoaMaisVelha(array $lista): array {
+    $maior = $lista[0];
+    foreach ($lista as $p) {
+        if ($p['idade'] > $maior['idade']) {
+            $maior = $p;
+        }
+    }
+    return $maior;
+}
+
+// Busca a pessoa mais nova e retorna nome e altura 
+function getPessoaMaisNova(array $lista): array {
+    $menor = $lista[0];
+    foreach ($lista as $p) {
+        if ($p['idade'] < $menor['idade']) {
+            $menor = $p;
+        }
+    }
+    return $menor;
+}
+
+// Calcula a média de idade do grupo 
+function calcularMediaIdade(array $lista): float {
+    $soma = 0;
+    foreach ($lista as $p) {
+        $soma += $p['idade'];
+    }
+    return count($lista) > 0 ? $soma / count($lista) : 0;
+}
+
+// Retorna nomes de quem está acima e abaixo da média 
+function getRelatorioMedia(array $lista, float $media): array {
+    $acima = [];
+    $abaixo = [];
+    foreach ($lista as $p) {
+        if ($p['idade'] > $media) $acima[] = $p['nome'];
+        elseif ($p['idade'] < $media) $abaixo[] = $p['nome'];
+    }
+    return ['acima' => $acima, 'abaixo' => $abaixo];
+}
 ?>
