@@ -1,38 +1,87 @@
 <?php
 include_once 'funcoes.php';
 
-$dadosBrutos = buscarDadosBrutos();
-$stats = processarEstatisticasIdade($dadosBrutos);
+$dadosBrutos = buscarDadosBrutos(); 
+
+$stats = processarEstatisticasIdade($dadosBrutos); 
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/index.css">
-    <title>Dados de Idade</title>
+    <title>Análise de Dados - Idade</title>
 </head>
 <body>
     <div class="container">
-        <h1>Análise de Idades</h1>
+        <h1>Relatório de Idades - Grupo de Pesquisa IFSul</h1>
 
         <table border="1">
-            <tr><td><strong>Maior Idade:</strong></td><td><?= $stats['mais_velha']['idade'] ?> anos (<?= $stats['mais_velha']['nome'] ?>)</td></tr>
-            <tr><td><strong>Menor Idade:</strong></td><td><?= $stats['mais_nova']['idade'] ?> anos (<?= $stats['mais_nova']['nome'] ?> - <?= $stats['mais_nova']['altura'] ?>m)</td></tr>
-            <tr><td><strong>Média de Idade:</strong></td><td><?= number_format($stats['media'], 1) ?> anos</td></tr>
+            <thead>
+                <tr>
+                    <th>Requisito</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Maior Idade?</strong></td>
+                    <td><?= $stats['mais_velha']['idade'] ?> anos</td>
+                </tr>
+                <tr>
+                    <td><strong>Nome da pessoa mais velha?</strong></td>
+                    <td><?= $stats['mais_velha']['nome'] ?></td>
+                </tr>
+                <tr>
+                    <td><strong>Menor Idade?</strong></td>
+                    <td><?= $stats['mais_nova']['idade'] ?> anos</td>
+                </tr>
+                <tr>
+                    <td><strong>Nome e altura da pessoa mais nova?</strong></td>
+                    <td>
+                        <?= $stats['mais_nova']['nome'] ?> 
+                        (<?= isset($stats['mais_nova']['altura']) ? $stats['mais_nova']['altura'] . "m" : "Altura não registada" ?>)
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Idade média do grupo?</strong></td>
+                    <td><?= number_format($stats['media'], 1) ?> anos</td>
+                </tr>
+                <tr>
+                    <td><strong>Acima da média?</strong></td>
+                    <td>
+                        <?= count($stats['nomes_acima']) ?> pessoa(s) <br>
+                        <small>(<?= implode(", ", $stats['nomes_acima']) ?>)</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Abaixo da média?</strong></td>
+                    <td><?= count($stats['nomes_abaixo']) ?> pessoa(s)</td>
+                </tr>
+            </tbody>
         </table>
 
-        <h3>Acima da Média (<?= count($stats['nomes_acima']) ?> estudante(s))</h3>
-        <p><?= implode(", ", $stats['nomes_acima']) ?></p>
-
-        <h3>Ranking de Idades</h3>
-        <p><strong>3 Maiores:</strong></p>
+        <h3>Ranking: 3 Maiores Idades</h3>
         <ul>
             <?php foreach ($stats['top3_velhos'] as $p): ?>
-                <li><?= $p['nome'] ?> - IMC: <?= number_format($p['imc'], 2) ?></li>
+                <li><?= $p['nome'] ?> - IMC: <?= number_format($p['imc'], 2) ?> (<?= $p['idade'] ?> anos)</li>
             <?php endforeach; ?>
         </ul>
 
-        <button onclick="location.href='../html/PainelAdministrativo.html'">Voltar</button>
+        <h3>Ranking: 5 Menores Idades</h3>
+        <ul>
+            <?php foreach ($stats['top5_novos'] as $p): ?>
+                <li><?= $p['nome'] ?> - IMC: <?= number_format($p['imc'], 2) ?> (<?= $p['idade'] ?> anos)</li>
+            <?php endforeach; ?>
+        </ul>
+
+        <br>
+        <button type="button" onclick="location.href='../html/PainelAdministrativo.html'">Voltar pro Painel</button>
     </div>
+
+    <footer>
+        <p>Pesquisadores: Igor Stein e Dupla | IFSul Venâncio Aires</p>
+    </footer>
 </body>
 </html>
