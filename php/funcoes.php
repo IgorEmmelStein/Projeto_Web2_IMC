@@ -42,7 +42,7 @@ function inserirestudante(string $nome, string $sobrenome, int $idade, float $pe
 {
     $conexao = conectar();
     $imc = calcularIMC($peso, $altura);
-    
+
     $stmt = $conexao->prepare("INSERT INTO estudantes (nome, sobrenome, idade, peso, altura, imc) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssiddd", $nome, $sobrenome, $idade, $peso, $altura, $imc);
 
@@ -111,10 +111,11 @@ function consultaEstudantes(mysqli $conexao): void
     echo "</table>";
 }
 
-// Retorna todos os registros em um array para processamento manual
 function buscarDadosBrutos(): array {
     $conn = conectar();
-    $res = $conn->query("SELECT * FROM estudantes"); 
+    
+    $res = $conn->query("SELECT idestudante, nome, idade, peso,altura, imc FROM estudantes"); 
+    
     if (!$res) {
         die("Erro na consulta: " . $conn->error);
     }
@@ -124,7 +125,8 @@ function buscarDadosBrutos(): array {
 }
 
 // Estatísticas de Idade
-function processarEstatisticasIdade(array $lista): array {
+function processarEstatisticasIdade(array $lista): array
+{
     if (empty($lista)) return [];
 
     $soma = 0;
@@ -149,7 +151,7 @@ function processarEstatisticasIdade(array $lista): array {
     // Ordenação manual para os rankings
     $listaMaiores = $lista;
     usort($listaMaiores, fn($a, $b) => $b['idade'] <=> $a['idade']);
-    
+
     $listaMenores = $lista;
     usort($listaMenores, fn($a, $b) => $a['idade'] <=> $b['idade']);
 
@@ -165,7 +167,8 @@ function processarEstatisticasIdade(array $lista): array {
 }
 
 // Estatísticas de Peso e IMC
-function processarEstatisticasSaude(array $lista): array {
+function processarEstatisticasSaude(array $lista): array
+{
     if (empty($lista)) return [];
 
     $maiorPeso = $lista[0]['peso'];
@@ -206,4 +209,3 @@ function processarEstatisticasSaude(array $lista): array {
         'ajustes_peso' => $foraDoNormal
     ];
 }
-?>

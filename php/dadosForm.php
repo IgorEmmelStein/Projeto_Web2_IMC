@@ -1,5 +1,4 @@
 <?php
-include 'dadosConexao.php';
 include 'funcoes.php';
 
 $conexao = conectar($localSevidor, $usuario, $senha, $nomeBaseDados, $conexao);
@@ -19,7 +18,6 @@ $imc = calcularIMC($pesoRecebido, $alturaRecebida);
 $query = $conexao->prepare("INSERT INTO estudantes (nome, sobrenome, idade, peso, altura, imc) VALUES (?, ?, ?, ?, ?, ?)");
 $query->bind_param("ssiddd", $nomeRecebido, $sobrenomeRecebido, $idadeRecebida, $pesoRecebido, $alturaRecebida, $imc);
 
-$inserido = mysqli_query($conexao, $query);
 
 if ($query->execute()) {
     echo "Cadastro realizado com sucesso!";

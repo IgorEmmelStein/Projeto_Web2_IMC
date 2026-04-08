@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/index.css">
-    <title>Painel Administrativo</title>
+    <title>Painel Administrativo - OMS</title>
 </head>
-
 <body>
-    <form action="../php/dadosConexao.php" method="POST">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Instituto_Federal_Marca_2015.svg/960px-Instituto_Federal_Marca_2015.svg.png"
-            style="width: 100%; max-width: 50px;" alt="banner"> <br>
-        <label>Painel administrativo</label>
-        <br><br>
+    <div class="container">
+        <h1>Painel Administrativo</h1>
+        <p>Selecione uma opção de análise de dados:</p>
+        
         <div class="menu-botoes">
-            <button type="button" onclick="window.location.href='PA_Registros.html'">Visualizar registros</button>
-            <button type="button" onclick="window.location.href='PA_DadosIMC.html'">Dados - IMC</button>
-            <button type="button" onclick="window.location.href='PA_DadosIdade.html'">Dados - Idade</button>
-            <button type="button" onclick="window.location.href='PA_DadosPeso.html'">Dados - Peso</button>
+            <button onclick="location.href='../php/PA_DadosIdade.php'">Análise de Idade</button>
+            <button onclick="location.href='../php/PA_DadosIMC.php'">Análise de IMC</button>
+            <button onclick="location.href='../php/PA_DadosPeso.php'">Análise de Peso</button>
+            <button onclick="location.href='PA_Registros.html'">Visualizar/Ed   itar Registros</button>
         </div>
-    </form>
 
-    <footer>Rodapé (Crédito - Desenvolvedores - Grupo de Pesquisa)</footer>
+        <br>
+        <button class="btn-voltar" onclick="location.href='index.html'">Sair do Painel</button>
+    </div>
+
+    <footer>
+        <p>Pesquisadores: Igor Stein e Dupla | IFSul Venâncio Aires</p>
+    </footer>
 </body>
-
 </html>
