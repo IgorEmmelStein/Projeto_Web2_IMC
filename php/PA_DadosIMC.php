@@ -70,7 +70,7 @@ $totalParticipantes = count($dadosBrutos);
     </div>
 
     <footer>
-        <p>Desenvolvedores: Igor Stein e Dupla | IFSul</p>
+        <p>Desenvolvedores: Igor Emmel Stein e João Pedro Pierret de Souza | IFSul</p>
     </footer>
 </body>
 </html>
