@@ -60,6 +60,10 @@ $conexao->close();
             <button onclick="location.href='../html/index.html'">Voltar ao Cadastro</button>
         <?php endif; ?>
     </div>
+
+    <footer>
+        <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
+    </footer>
 </body>
 
 </html>

@@ -22,5 +22,9 @@
         <br>
         <button onclick="location.href='../html/PainelAdministrativo.html'">Voltar ao Painel Administrativo</button>
     </div>
+
+    <footer>
+        <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
+    </footer>
  </body>
  </html>

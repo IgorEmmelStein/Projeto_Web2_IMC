@@ -81,7 +81,7 @@ $stats = processarEstatisticasIdade($dadosBrutos);
     </div>
 
     <footer>
-        <p>Pesquisadores: Igor Stein e Dupla | IFSul Venâncio Aires</p>
+        <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
     </footer>
 </body>
 </html>

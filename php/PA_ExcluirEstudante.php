@@ -40,6 +40,10 @@ if (isset($_GET['id'])) {
             <button onclick="location.href='PA_Registros.php'">Voltar</button>
         <?php endif; ?>
     </div>
+
+    <footer>
+        <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
+    </footer>
 </body>
 
 </html>
