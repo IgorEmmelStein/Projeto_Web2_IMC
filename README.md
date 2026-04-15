@@ -1,1 +1,1 @@
-**[LINK DO MAPA DE USO](https://canva.link/ivn28zy0w2x72gk)**
+**[LINK DO MAPA DE NAVEGAÇÃO](https://canva.link/vixrdxaq9gkh6no)**
