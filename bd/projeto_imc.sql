@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS estudantes (
 );
 
 INSERT INTO estudantes (nome, sobrenome, idade, peso, altura) VALUES 
-('Ana Souza', 'Souza', 21, 65.50, 1.70),
-('Bruno Lima', 'Lima', 24, 82.00, 1.85),
-('Carla Dias', 'Dias', 19, 58.20, 1.65),
-('Diego Silva', 'Silva', 22, 90.00, 1.90);
+('Ana', 'Souza', 21, 65.50, 1.70),
+('Bruno', 'Lima', 24, 82.00, 1.85),
+('Carla', 'Dias', 19, 58.20, 1.65),
+('Diego', 'Silva', 22, 90.00, 1.90);

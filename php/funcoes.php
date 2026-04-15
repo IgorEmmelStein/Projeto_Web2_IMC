@@ -15,8 +15,11 @@ function conectar(): mysqli
 
 function registrarLog(string $operacao): void
 {
-    $dataHora = date('Y-m-d H:i:s');
+    date_default_timezone_set('America/Sao_Paulo');
+    
+    $dataHora = date('d/m/Y H:i:s'); 
     $mensagem = "[$dataHora] Operação: $operacao" . PHP_EOL;
+    
     file_put_contents('operacoes_bd.txt', $mensagem, FILE_APPEND);
 }
 
@@ -57,12 +60,11 @@ function inserirestudante(string $nome, string $sobrenome, int $idade, float $pe
 
 function excluirestudante(int $id): void
 {
-    $conexao = conectar();
+    $conexao = conectar(); // A própria função busca a conexão
     $comandoSQL = "DELETE FROM estudantes WHERE idestudante = $id";
 
     if (mysqli_query($conexao, $comandoSQL)) {
         registrarLog("Exclusão de estudante com ID: $id");
-        echo "estudante excluída com sucesso!";
     } else {
         echo "Erro: " . mysqli_error($conexao);
     }
@@ -91,31 +93,40 @@ function consultaEstudantes(mysqli $conexao): void
 
     echo "<table border='1'>
             <tr>
+                <th>ID Estudante</th>
                 <th>Nome</th>
+                <th>Sobrenome</th>
                 <th>Idade</th>
+                <th>Peso</th>
+                <th>Altura</th>
                 <th>IMC</th>
                 <th>Ações</th> 
             </tr>";
 
     while ($reg = mysqli_fetch_array($retorno)) {
         echo "<tr>
-                <td>{$reg['nome']} {$reg['sobrenome']}</td>
+                <td>{$reg['idestudante']}</td>
+                <td>{$reg['nome']}</td>
+                <td>{$reg['sobrenome']}</td>
                 <td>{$reg['idade']}</td>
+                <td>" . number_format($reg['peso'], 2) . "</td>
+                <td>" . number_format($reg['altura'], 2) . "</td>
                 <td>" . number_format($reg['imc'], 2) . "</td>
                 <td>
-                    <a href='form_alterar.php?id={$reg['idestudante']}'>Alterar</a> | 
-                    <a href='../php/processa_exclusao.php?id={$reg['idestudante']}'>Excluir</a>
+                    <a href='PA_ExcluirEstudante.php?id={$reg["idestudante"]}'>Excluir</a>
+                    <a href='PA_AlterarEstudante.php?id={$reg["idestudante"]}'>Alterar</a>    
                 </td>
               </tr>";
     }
     echo "</table>";
 }
 
-function buscarDadosBrutos(): array {
+function buscarDadosBrutos(): array
+{
     $conn = conectar();
-    
-    $res = $conn->query("SELECT idestudante, nome, idade, peso,altura, imc FROM estudantes"); 
-    
+
+    $res = $conn->query("SELECT idestudante, nome, idade, peso,altura, imc FROM estudantes");
+
     if (!$res) {
         die("Erro na consulta: " . $conn->error);
     }
