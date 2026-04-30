@@ -1,19 +1,22 @@
 <?php
 include_once 'funcoes.php';
 
-$dadosBrutos = buscarDadosBrutos(); 
+$dadosBrutos = buscarDadosBrutos();
 
 $stats = processarEstatisticasSaude($dadosBrutos);
 $totalParticipantes = count($dadosBrutos);
+$lista = $dadosBrutos;
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../css/index.css">
     <title>Dados - Índice de Massa Corporal</title>
 </head>
+
 <body>
     <div class="container">
         <h1>Relatório de IMC - OMS Venâncio Aires</h1>
@@ -28,13 +31,17 @@ $totalParticipantes = count($dadosBrutos);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($dadosBrutos as $p): ?>
-                <tr>
-                    <td><?= $p['nome'] ?></td>
-                    <td><?= number_format($p['imc'], 2) ?></td>
-                    <td><?= classificarIMC($p['imc']) ?></td>
-                </tr>
-                <?php endforeach; ?>
+                <?php // Dentro do teu loop que gera as linhas da tabela (<tr>)
+                foreach ($lista as $p) {
+                    // Verifica se o IMC existe antes de tentar classificar
+                    $classe = ($p['imc'] !== null) ? classificarIMC((float)$p['imc']) : "Não calculado";
+
+                    echo "<tr>";
+                    echo "<td>" . $p['nome'] . "</td>";
+                    echo "<td>" . number_format($p['imc'] ?? 0, 2) . "</td>";
+                    echo "<td>" . $classe . "</td>";
+                    echo "</tr>";
+                } ?>
             </tbody>
         </table>
 
@@ -56,11 +63,11 @@ $totalParticipantes = count($dadosBrutos);
             </thead>
             <tbody>
                 <?php foreach ($stats['contagem_imc'] as $classe => $quantidade): ?>
-                <tr>
-                    <td><?= $classe ?></td>
-                    <td><?= $quantidade ?></td>
-                    <td><?= number_format(($quantidade / $totalParticipantes) * 100, 1) ?>%</td>
-                </tr>
+                    <tr>
+                        <td><?= $classe ?></td>
+                        <td><?= $quantidade ?></td>
+                        <td><?= number_format(($quantidade / $totalParticipantes) * 100, 1) ?>%</td>
+                    </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
@@ -73,4 +80,5 @@ $totalParticipantes = count($dadosBrutos);
         <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
     </footer>
 </body>
+
 </html>

@@ -16,10 +16,10 @@ function conectar(): mysqli
 function registrarLog(string $operacao): void
 {
     date_default_timezone_set('America/Sao_Paulo');
-    
-    $dataHora = date('d/m/Y H:i:s'); 
+
+    $dataHora = date('d/m/Y H:i:s');
     $mensagem = "[$dataHora] Operação: $operacao" . PHP_EOL;
-    
+
     file_put_contents('operacoes_bd.txt', $mensagem, FILE_APPEND);
 }
 
@@ -195,19 +195,19 @@ function processarEstatisticasSaude(array $lista): array
         if ($p['peso'] < $menorPeso) $menorPeso = $p['peso'];
         $somaPeso += $p['peso'];
 
-        // IMC
-        $somaIMC += $p['imc'];
-        $classe = classificarIMC($p['imc']);
-        $contagemGraus[$classe] = ($contagemGraus[$classe] ?? 0) + 1;
+        if ($p['imc'] !== null) {
+            $somaIMC += $p['imc'];
+            $classe = classificarIMC((float)$p['imc']);
+            $contagemGraus[$classe] = ($contagemGraus[$classe] ?? 0) + 1;
 
-        // Fora do Normal (Cálculo de ganho/perda)
-        if ($classe != "Peso normal") {
-            $pesoIdeal = 22 * ($p['altura'] * $p['altura']);
-            $foraDoNormal[] = [
-                'nome' => $p['nome'],
-                'peso_atual' => $p['peso'],
-                'diferenca' => $pesoIdeal - $p['peso']
-            ];
+            if ($classe != "Peso normal") {
+                $pesoIdeal = 22 * ($p['altura'] * $p['altura']);
+                $foraDoNormal[] = [
+                    'nome' => $p['nome'],
+                    'peso_atual' => $p['peso'],
+                    'diferenca' => $pesoIdeal - $p['peso']
+                ];
+            }
         }
     }
 

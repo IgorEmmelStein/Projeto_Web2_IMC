@@ -1,1 +1,3 @@
 [08/04/2026 22:20:57] Operação: Exclusão de estudante com ID: 19[15/04/2026 19:08:04] Operação: Exclusão de estudante com ID: 18
+[29/04/2026 22:06:40] Operação: Alteração de estudante com ID: 5
+[29/04/2026 22:06:43] Operação: Exclusão de estudante com ID: 5
