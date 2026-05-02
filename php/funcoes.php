@@ -61,7 +61,7 @@ function inserirestudante(string $nome, string $sobrenome, int $idade, float $pe
 function excluirestudante($id)
 {
     global $pdo;
-    $sql = "DELETE FROM estudantes WHERE id = :id";
+    $sql = "DELETE FROM estudantes WHERE idestudante = :id";
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     return $stmt->execute();
@@ -117,21 +117,20 @@ function consultaEstudantes(mysqli $conexao): void
     echo "</table>";
 }
 
-function buscarDadosBrutos(): array
-{
-    $conn = conectar();
 
-    $res = $conn->query("SELECT idestudante, nome, idade, peso,altura, imc FROM estudantes");
-
-    if (!$res) {
-        die("Erro na consulta: " . $conn->error);
+function buscarDadosBrutos() {
+    global $pdo; 
+    try {
+        
+        $sql = "SELECT idestudante, nome, sobrenome, peso, altura FROM estudantes";
+        $stmt = $pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        die("Erro na busca: " . $e->getMessage());
     }
-    $dados = $res->fetch_all(MYSQLI_ASSOC);
-    $conn->close();
-    return $dados;
 }
 
-// Estatísticas de Idade
+
 function processarEstatisticasIdade(array $lista): array
 {
     if (empty($lista)) return [];
