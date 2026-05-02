@@ -58,17 +58,13 @@ function inserirestudante(string $nome, string $sobrenome, int $idade, float $pe
     $conexao->close();
 }
 
-function excluirestudante(int $id): void
+function excluirestudante($id)
 {
-    $conexao = conectar(); // A própria função busca a conexão
-    $comandoSQL = "DELETE FROM estudantes WHERE idestudante = $id";
-
-    if (mysqli_query($conexao, $comandoSQL)) {
-        registrarLog("Exclusão de estudante com ID: $id");
-    } else {
-        echo "Erro: " . mysqli_error($conexao);
-    }
-    mysqli_close($conexao);
+    global $pdo;
+    $sql = "DELETE FROM estudantes WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    return $stmt->execute();
 }
 
 function alterarestudante(int $id, string $nome, string $sobrenome, int $idade, float $peso, float $altura): void

@@ -1,5 +1,15 @@
 <?php
-$localSevidor = "localhost";
+$host    = "localhost";
+$dbname  = "projeto_imc";
 $usuario = "root";
-$senha = "";
-$nomeBaseDados = "projeto_imc";
+$senha   = "";
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $usuario, $senha);
+
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+} catch (PDOException $e) {
+    die("Erro ao conectar pro banco de dados: " . $e->getMessage());
+}
+?>

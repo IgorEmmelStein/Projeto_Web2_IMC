@@ -1,30 +1,65 @@
 <?php
- require_once 'funcoes.php';
+include 'dadosConexao.php';
+include 'funcoes.php';
 
- $conexao = conectar();
- ?>
+try {
+    $sql = "SELECT id, nome, peso, altura FROM estudantes";
+    $stmt = $pdo->query($sql);
+    
+    $estudantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Erro ao buscar registros: " . $e->getMessage());
+}
+?>
 
- <!DOCTYPE html>
- <html lang="pt-br">
- <head>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizar registros</title>
+    <title>Registros de IMC</title>
     <link rel="stylesheet" href="../css/index.css">
- </head>
- <body>
+</head>
+<body>
     <div class="container">
-        <h1>Registros do Sistema (Modo desenvolvedor)</h1>
-        <p>Aqui você pode visualizar os registros do sistema, editar ou excluir.</p>
-        <?php
-        consultaEstudantes($conexao);
-        ?>
-        <br>
-        <button onclick="location.href='../html/PainelAdministrativo.html'">Voltar ao Painel Administrativo</button>
+        <h1>Registros de Estudantes</h1>
+        <button onclick="location.href='../html/index.html'">Novo Cadastro</button>
+        
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Peso</th>
+                    <th>Altura</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (count($estudantes) > 0): ?>
+                    <?php foreach ($estudantes as $aluno): ?>
+                        <tr>
+                            <td><?= $aluno['id'] ?></td>
+                            <td><?= $aluno['nome'] ?></td>
+                            <td><?= $aluno['peso'] ?> kg</td>
+                            <td><?= $aluno['altura'] ?> m</td>
+                            <td>
+                                <a href="PA_AlterarEstudante.php?id=<?= $aluno['id'] ?>">Editar</a> | 
+                                <a href="PA_ExcluirEstudante.php?id=<?= $aluno['id'] ?>" 
+                                   onclick="return confirm('Tem certeza que deseja excluir?')">Excluir</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5">Nenhum registro encontrado.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 
     <footer>
         <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
     </footer>
- </body>
- </html>
+</body>
+</html>

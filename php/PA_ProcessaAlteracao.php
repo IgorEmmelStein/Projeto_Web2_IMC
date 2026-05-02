@@ -1,18 +1,31 @@
 <?php
+include 'dadosConexao.php';
 include 'funcoes.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id        = (int)$_POST['id_estudante'];
-    $nome      = $_POST['containerNome'];
-    $sobrenome = $_POST['containerSobrenome'];
-    $idade     = (int)$_POST['containerIdade'];
-    $peso      = (float)$_POST['containerPeso'];
-    $altura    = (float)$_POST['containerAltura'];
+    $id = (int)$_POST['id'];
+    $nome = $_POST['nome'];
+    $peso = (float)$_POST['peso'];
+    $altura = (float)$_POST['altura'];
 
-    alterarestudante($id, $nome, $sobrenome, $idade, $peso, $altura);
+    try {
+        $sql = "UPDATE estudantes SET nome = :nome, peso = :peso, altura = :altura WHERE id = :id";
+        $stmt = $pdo->prepare($sql);
 
-    echo "<script>
-            alert('Dados atualizados com sucesso!');
-            window.location.href = 'PA_Registros.php';
-          </script>";
+        $stmt->bindValue(':nome', $nome);
+        $stmt->bindValue(':peso', $peso);
+        $stmt->bindValue(':altura', $altura);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            header("Location: PA_Registros.php?status=sucesso");
+            exit;
+        }
+    } catch (PDOException $e) {
+        die("Erro ao atualizar registro: " . $e->getMessage());
+    }
+} else {
+    header("Location: PA_Registros.php");
+    exit;
 }
+?>

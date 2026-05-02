@@ -1,9 +1,14 @@
 <?php
-include_once 'funcoes.php';
+include 'dadosConexao.php';
+include 'funcoes.php';
 
-$dadosBrutos = buscarDadosBrutos(); 
-
-$stats = processarEstatisticasIdade($dadosBrutos); 
+try {
+    $sql = "SELECT nome, idade FROM estudantes ORDER BY idade ASC";
+    $stmt = $pdo->query($sql);
+    $dadosIdade = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Erro ao carregar dados de idade: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +22,7 @@ $stats = processarEstatisticasIdade($dadosBrutos);
     <div class="container">
         <h1>Relatório de Idades - Grupo de Pesquisa IFSul</h1>
 
-        <table border="1">
+        <table>
             <thead>
                 <tr>
                     <th>Requisito</th>
@@ -27,51 +32,51 @@ $stats = processarEstatisticasIdade($dadosBrutos);
             <tbody>
                 <tr>
                     <td><strong>Maior Idade?</strong></td>
-                    <td><?= $stats['mais_velha']['idade'] ?> anos</td>
+                    <td><?= $dadosIdade['mais_velha']['idade'] ?> anos</td>
                 </tr>
                 <tr>
                     <td><strong>Nome da pessoa mais velha?</strong></td>
-                    <td><?= $stats['mais_velha']['nome'] ?></td>
+                    <td><?= $dadosIdade['mais_velha']['nome'] ?></td>
                 </tr>
                 <tr>
                     <td><strong>Menor Idade?</strong></td>
-                    <td><?= $stats['mais_nova']['idade'] ?> anos</td>
+                    <td><?= $dadosIdade['mais_nova']['idade'] ?> anos</td>
                 </tr>
                 <tr>
                     <td><strong>Nome e altura da pessoa mais nova?</strong></td>
                     <td>
-                        <?= $stats['mais_nova']['nome'] ?> 
-                        (<?= isset($stats['mais_nova']['altura']) ? $stats['mais_nova']['altura'] . "m" : "Altura não registada" ?>)
+                        <?= $dadosIdade['mais_nova']['nome'] ?> 
+                        (<?= isset($dadosIdade['mais_nova']['altura']) ? $dadosIdade['mais_nova']['altura'] . "m" : "Altura não registada" ?>)
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Idade média do grupo?</strong></td>
-                    <td><?= number_format($stats['media'], 1) ?> anos</td>
+                    <td><?= number_format($dadosIdade['media'], 1) ?> anos</td>
                 </tr>
                 <tr>
                     <td><strong>Acima da média?</strong></td>
                     <td>
-                        <?= count($stats['nomes_acima']) ?> pessoa(s) <br>
-                        <small>(<?= implode(", ", $stats['nomes_acima']) ?>)</small>
+                        <?= count($dadosIdade['nomes_acima']) ?> pessoa(s) <br>
+                        <small>(<?= implode(", ", $dadosIdade['nomes_acima']) ?>)</small>
                     </td>
                 </tr>
                 <tr>
                     <td><strong>Abaixo da média?</strong></td>
-                    <td><?= count($stats['nomes_abaixo']) ?> pessoa(s)</td>
+                    <td><?= count($dadosIdade['nomes_abaixo']) ?> pessoa(s)</td>
                 </tr>
             </tbody>
         </table>
 
         <h3>Ranking: 3 Maiores Idades</h3>
         <ul>
-            <?php foreach ($stats['top3_velhos'] as $p): ?>
+            <?php foreach ($dadosIdade['top3_velhos'] as $p): ?>
                 <li><?= $p['nome'] ?> - IMC: <?= number_format($p['imc'], 2) ?> (<?= $p['idade'] ?> anos)</li>
             <?php endforeach; ?>
         </ul>
 
         <h3>Ranking: 5 Menores Idades</h3>
         <ul>
-            <?php foreach ($stats['top5_novos'] as $p): ?>
+            <?php foreach ($dadosIdade['top5_novos'] as $p): ?>
                 <li><?= $p['nome'] ?> - IMC: <?= number_format($p['imc'], 2) ?> (<?= $p['idade'] ?> anos)</li>
             <?php endforeach; ?>
         </ul>

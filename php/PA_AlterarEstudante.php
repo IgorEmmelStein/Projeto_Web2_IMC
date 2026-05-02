@@ -1,16 +1,22 @@
 <?php
+include 'dadosConexao.php';
 include 'funcoes.php';
 
-$conexao = conectar();
+$estudante = null;
 
-$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (isset($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    
+    $sql = "SELECT * FROM estudantes WHERE id = :id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $estudante = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
-$comandoSQL = "SELECT * FROM estudantes WHERE idestudante = $id";
-$resultado = mysqli_query($conexao, $comandoSQL);
-$dados = mysqli_fetch_array($resultado);
-
-if (!$dados) {
-    echo "<script>alert('Estudante não encontrado!'); window.location.href='PA_Visualizar.php';</script>";
+if (!$estudante) {
+    echo "Estudante não encontrado!";
     exit;
 }
 ?>
@@ -19,39 +25,27 @@ if (!$dados) {
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alterar Estudante</title>
-    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/index.css"> 
 </head>
-<body>  
+<body>
     <div class="container">
-        <h1>Alterar Dados</h1>
-        <form action="PA_ProcessaAlteracao.php" method="post">
-            <input type="hidden" name="id_estudante" value="<?= $dados['idestudante'] ?>">
-
-            <label>Nome: </label>
-            <input type="text" name="containerNome" value="<?= $dados['nome'] ?>">
-            <br>
-            <label>Sobrenome:</label>
-            <input type="text" name="containerSobrenome" value="<?= $dados['sobrenome'] ?>">
-            <br>
-            <label>Idade:</label>
-            <input type="number" name="containerIdade" value="<?= $dados['idade'] ?>">
-            <br>
-            <label>Peso:</label>
-            <input type="number" name="containerPeso" step="0.01" value="<?= $dados['peso'] ?>">
-            <br>
-            <label>Altura:</label>
-            <input type="number" name="containerAltura" step="0.01" value="<?= $dados['altura'] ?>">
-            <br>
+        <h1>Alterar Dados do Estudante</h1>
+        <form action="PA_ProcessaAlteracao.php" method="POST">
+            <input type="hidden" name="id" value="<?= $estudante['id'] ?>">
+            
+            <label>Nome:</label>
+            <input type="text" name="nome" value="<?= $estudante['nome'] ?>" required>
+            
+            <label>Peso (kg):</label>
+            <input type="number" step="0.01" name="peso" value="<?= $estudante['peso'] ?>" required>
+            
+            <label>Altura (m):</label>
+            <input type="number" step="0.01" name="altura" value="<?= $estudante['altura'] ?>" required>
+            
             <button type="submit">Salvar Alterações</button>
+            <button type="button" onclick="location.href='PA_Registros.php'">Cancelar</button>
         </form>
-        <br>
-        <button class="btn-voltar" onclick="location.href='PA_Visualizar.php'">Cancelar</button>
     </div>
-
-    <footer>
-        <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
-    </footer>
 </body>
 </html>

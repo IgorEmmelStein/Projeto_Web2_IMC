@@ -1,84 +1,62 @@
 <?php
-include_once 'funcoes.php';
+include 'dadosConexao.php';
+include 'funcoes.php';
 
-$dadosBrutos = buscarDadosBrutos();
-
-$stats = processarEstatisticasSaude($dadosBrutos);
-$totalParticipantes = count($dadosBrutos);
-$lista = $dadosBrutos;
+try {
+    $sql = "SELECT nome, peso, altura FROM estudantes";
+    $stmt = $pdo->query($sql);
+    $dados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Erro ao carregar dados: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
+    <title>Relatório de IMC</title>
     <link rel="stylesheet" href="../css/index.css">
-    <title>Dados - Índice de Massa Corporal</title>
 </head>
-
 <body>
     <div class="container">
-        <h1>Relatório de IMC - OMS Venâncio Aires</h1>
-
-        <h3>IMC por Participante</h3>
-        <table border="1">
+        <h1>Análise de IMC da Turma</h1>
+        <button onclick="location.href='PainelAdministrativo.html'">Voltar ao Painel</button>
+        
+        <table>
             <thead>
                 <tr>
                     <th>Nome</th>
+                    <th>Peso (kg)</th>
+                    <th>Altura (m)</th>
                     <th>IMC</th>
                     <th>Classificação</th>
                 </tr>
             </thead>
             <tbody>
-                <?php // Dentro do teu loop que gera as linhas da tabela (<tr>)
-                foreach ($lista as $p) {
-                    // Verifica se o IMC existe antes de tentar classificar
-                    $classe = ($p['imc'] !== null) ? classificarIMC((float)$p['imc']) : "Não calculado";
+                <?php foreach ($dados as $linha): 
+                    $imc = $linha['peso'] / ($linha['altura'] * $linha['altura']);
+                    $classificacao = "";
 
-                    echo "<tr>";
-                    echo "<td>" . $p['nome'] . "</td>";
-                    echo "<td>" . number_format($p['imc'] ?? 0, 2) . "</td>";
-                    echo "<td>" . $classe . "</td>";
-                    echo "</tr>";
-                } ?>
-            </tbody>
-        </table>
-
-        <hr>
-
-        <h3>Média do Grupo</h3>
-        <p><strong>IMC Médio:</strong> <?= number_format($stats['imc_media'], 2) ?></p>
-
-        <hr>
-
-        <h3>Percentuais por Grau de Obesidade do Grupo</h3>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Grau / Classificação</th>
-                    <th>Quantidade</th>
-                    <th>Percentual</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($stats['contagem_imc'] as $classe => $quantidade): ?>
+                    if ($imc < 18.5) $classificacao = "Abaixo do peso";
+                    elseif ($imc < 24.9) $classificacao = "Peso normal";
+                    elseif ($imc < 29.9) $classificacao = "Sobrepeso";
+                    else $classificacao = "Obesidade";
+                ?>
                     <tr>
-                        <td><?= $classe ?></td>
-                        <td><?= $quantidade ?></td>
-                        <td><?= number_format(($quantidade / $totalParticipantes) * 100, 1) ?>%</td>
+                        <td><?= $linha['nome'] ?></td>
+                        <td><?= $linha['peso'] ?></td>
+                        <td><?= $linha['altura'] ?></td>
+                        <td><?= number_format($imc, 2) ?></td>
+                        <td><?= $classificacao ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
         </table>
-
-        <br>
-        <button type="button" onclick="location.href='../html/PainelAdministrativo.html'">Voltar pro Painel</button>
     </div>
 
     <footer>
         <p>Pesquisadores: Igor Stein e João Pierret | IFSul Venâncio Aires</p>
     </footer>
 </body>
-
 </html>
